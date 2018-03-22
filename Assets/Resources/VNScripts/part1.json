@@ -1,0 +1,12 @@
+{
+	// Main is where everything starts. Also, comments do work.
+	"main": [
+		{"CreateElement": "bg", "path": "Img/Bg/forest-bg1", "x": 960, "y": 540},
+		{"CreateElement": "char", "path": "Img/Char/nanami", "x": 960, "y": 540, "o": 2, "_h": "h"},
+
+		"According to all known laws of aviation, there are no ways a bee should be able to fly.",
+		"hi #{name}",
+		{"DestroyElement": "char", "_h": "h"},
+		"even more"
+	]
+}
