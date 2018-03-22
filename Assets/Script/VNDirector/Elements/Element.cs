@@ -8,12 +8,33 @@ public class Element : MonoBehaviour
 {
     public static Dictionary<string, GameObject> collection = new Dictionary<string, GameObject>();
 
-    public Vector2 position;
     public float zOrder;
 
     public float rotation;
-    public Vector2 scale;
-    
+
+    private Vector2 _screenPos;
+
+    public Vector2 Position {
+        get {
+            return _screenPos;
+        }
+
+        set {
+            _screenPos = value;
+            gameObject.transform.position = Manager.ScreenToWorld(value.x, value.y, 0);
+        }
+    }
+
+    public Vector2 Scale {
+        get {
+            return gameObject.transform.localScale;
+        }
+
+        set {
+            gameObject.transform.localScale = value;
+        }
+    }
+
     public static void CreateElementFromCommand(JToken command) {
         Vector2 scaleVector = Vector2.one;
         float rotation = 0;
@@ -32,7 +53,7 @@ public class Element : MonoBehaviour
         CreateElement(
             command["CreateElement"].Value<string>(),
             command["path"].Value<string>(),
-            Manager.ScreenToWorld(command["x"].Value<float>(), command["y"].Value<float>()),
+            new Vector2(command["x"].Value<float>(), command["y"].Value<float>()),
             scaleVector,
             rotation,
             order
@@ -41,10 +62,6 @@ public class Element : MonoBehaviour
 
     public static void CreateElement(string name, string spritePath, Vector2 position, Vector2? scale = null, float rotation = 0, int order = 0) {
 
-        if (scale == null) {
-            scale = Vector2.one; // Default parameter doesn't work
-        }
-
         var gameElement = new GameObject(name);
         var spriteComponent = gameElement.AddComponent<SpriteRenderer>();
         var element = gameElement.AddComponent<Element>();
@@ -52,7 +69,8 @@ public class Element : MonoBehaviour
         spriteComponent.sortingOrder = order;
         spriteComponent.sprite = Resources.Load<Sprite>(spritePath);
 
-        gameElement.transform.position = position;
+        element.Position = position;
+        element.Scale = scale ?? Vector2.one;
 
         collection[name] = gameElement;
     }

@@ -6,6 +6,8 @@ using Newtonsoft.Json.Linq;
 
 public class Manager : MonoBehaviour {
 
+    public View view;
+
     public bool isDebug = true;
 
     const int ScreenWidth = 1920;
@@ -14,18 +16,14 @@ public class Manager : MonoBehaviour {
     private JObject currentScript;
     public string route = "root";
     public int step = 0;
-
-    public Text nameBox;
-    public Text dialogueBox;
     
-    private JSEngine jsEngine = new JSEngine();
+    public static JSEngine jsEngine = new JSEngine();
 
     private HoldState hold = HoldState.Clear; // when held, the VN waits for user click to go next.
 
     // Use this for initialization
     void Start () {
         currentScript = LoadScript("VNScripts/part1");
-        
 	}
 	
 	// Update is called once per frame
@@ -46,13 +44,19 @@ public class Manager : MonoBehaviour {
             Debug.Log(command);
 
             if (command.Type == JTokenType.String) {
-                SetDialogue(command.Value<string>());
+                view.SetDialogue(command.Value<string>());
+
+            } else if (command["Dialogue"] != null) {
+                view.SetDialogue(command["Dialogue"].Value<string>());
 
             } else if (command["CreateElement"] != null) {
                 Element.CreateElementFromCommand(command);
 
             } else if (command["DestroyElement"] != null) {
                 Element.DestroyElement(command["DestroyElement"].Value<string>());
+
+            } else if (command["MoveElement"] != null) {
+
             }
             hold = Hold.GetHoldState(command);
             if (hold == HoldState.Clear) step++;
@@ -64,10 +68,6 @@ public class Manager : MonoBehaviour {
             step++;
             hold = HoldState.Clear;
         }
-    }
-
-    void SetDialogue(string text, bool isScrolled=true) {
-        dialogueBox.text = jsEngine.FormatString(text);
     }
 
     // Note: drop the file extension.
