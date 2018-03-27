@@ -6,13 +6,14 @@ using UnityEngine;
 
 [Serializable]
 public class Element : MonoBehaviour {
+
     public static Dictionary<string, GameObject> collection = new Dictionary<string, GameObject>();
+    public static GameObject stage = GameObject.Find("Stage");
 
     public float zOrder;
 
-    public float rotation;
-
     private Vector2 _screenPos;
+    public float _rotation;
 
     public Vector2 Position {
         get {
@@ -35,6 +36,17 @@ public class Element : MonoBehaviour {
         }
     }
 
+    public float Rotation {
+        get {
+            return _rotation;
+        }
+
+        set {
+            _rotation = value;
+            transform.rotation = Quaternion.AngleAxis(value, Vector3.back);
+        }
+    }
+
     public static void CreateElementFromXML(XmlNode command) {
         CreateElement(
             command.Attributes["name"].Value,
@@ -52,25 +64,26 @@ public class Element : MonoBehaviour {
         );
     }
 
+    public void MoveFromXML(XmlNode command) {
+        
+    }
+
     public static void CreateElement(string name, string spritePath, Vector2 position, Vector2? scale = null, float rotation = 0, int order = 0) {
 
         var gameElement = new GameObject(name);
         var spriteComponent = gameElement.AddComponent<SpriteRenderer>();
         var element = gameElement.AddComponent<Element>();
 
-        //var stopwatch = new System.Diagnostics.Stopwatch();
-        //stopwatch.Start();
-
         spriteComponent.sortingOrder = order;
-
-        //stopwatch.Stop();
-        //Debug.Log(name + " " + stopwatch.ElapsedMilliseconds);
 
         spriteComponent.sprite = ResourceController.Get<Sprite>(spritePath);
 
 
         element.Position = position;
         element.Scale = scale ?? Vector2.one;
+        element.Rotation = rotation;
+
+        element.transform.SetParent(stage.transform);
 
         collection[name] = gameElement;
     }

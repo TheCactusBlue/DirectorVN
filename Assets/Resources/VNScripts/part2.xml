@@ -5,12 +5,13 @@
 
         <Element-Create name="bg" path="Img/Bg/classroom1" x="960" y="540" _h="h"/>
         <JS>log("hello world")</JS>
-        <Element-Create name="char" path="Img/Char/moon" x="960" y="1200" o="2" _h="h"/>
+        <Element-Create name="char" path="Img/Char/moon" x="960" y="1200" r="0" o="2" _h="h"/>
         <Music-Play>Audio/Music/Yawn</Music-Play>
         <Text>hello world</Text>
         <Jump label="test"/>
     </Label>
     <Label name="test">
+        <Element-Destroy name="char"/>
         <Text>Jump test here</Text>
     </Label>
 </Script>

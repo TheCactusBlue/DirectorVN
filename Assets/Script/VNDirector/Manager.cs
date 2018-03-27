@@ -15,7 +15,7 @@ public class Manager : MonoBehaviour {
     const int ScreenHeight = 1080;
 
     public XmlDocument vnScript;
-    public string route = "root";
+    public string route = "main";
     public int step = 1;
     
     public static JSEngine jsEngine = new JSEngine();
