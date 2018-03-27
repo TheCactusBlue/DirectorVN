@@ -1,13 +1,18 @@
 {
 	// Main is where everything starts. Also, comments do work.
 	"main": [
-		{"CreateElement": "bg", "path": "Img/Bg/forest-bg1", "x": 960, "y": 540, "s": 1},
-		{"CreateElement": "char", "path": "Img/Char/nanami", "x": 960, "y": 700, "o": 2, "_h": "h"},
+		{"Load": "Audio/Music/Yawn"},
+		{"Load": "Img/Char/moon"},
+		{"Load": "Img/Bg/classroom1"},
+		{"Music": "Audio/Music/Yawn"},
+		
+		{"CreateElement": "bg", "path": "Img/Bg/classroom1", "x": 960, "y": 540, "s": 1, "_h": "h"},
+		{"CreateElement": "moon", "path": "Img/Char/moon", "x": 960, "y": 1200, "o": 2},
+		"test text",
 
-    {"Dialogue":  "This works as well.", "_h": "h"},
-		"According to all known <i>laws</i> of aviation, there are no ways a bee should be able to fly.",
-		"hi #{name}",
-		{"DestroyElement": "char", "_h": "h"},
+		"I'm nervous, but I think anyone would be nervous on their first day at a new high school. I have to make new friends. I can't even remember how I made the last ones! I have to start my social life from scratch!",
+		"I used to live in this town when I was young. I don't remember much, but I remember a family with a girl about my age.",
+		{"DestroyElement": "moon", "_h": "h"},
 		"even more"
 	]
 }

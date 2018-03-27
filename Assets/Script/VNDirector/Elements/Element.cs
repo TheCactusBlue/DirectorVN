@@ -1,11 +1,11 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Xml;
 using UnityEngine;
 
 [Serializable]
-public class Element : MonoBehaviour
-{
+public class Element : MonoBehaviour {
     public static Dictionary<string, GameObject> collection = new Dictionary<string, GameObject>();
 
     public float zOrder;
@@ -35,28 +35,20 @@ public class Element : MonoBehaviour
         }
     }
 
-    public static void CreateElementFromCommand(JToken command) {
-        Vector2 scaleVector = Vector2.one;
-        float rotation = 0;
-        int order = 0;
-
-        if (command["s"] != null) {
-            scaleVector = new Vector2(command["s"].Value<float>(), command["s"].Value<float>());
-        }
-        if (command["r"] != null) {
-            rotation = command["r"].Value<float>();
-        }
-        if (command["o"] != null) {
-            order = command["o"].Value<int>();
-        }
-
+    public static void CreateElementFromXML(XmlNode command) {
         CreateElement(
-            command["CreateElement"].Value<string>(),
-            command["path"].Value<string>(),
-            new Vector2(command["x"].Value<float>(), command["y"].Value<float>()),
-            scaleVector,
-            rotation,
-            order
+            command.Attributes["name"].Value,
+            command.Attributes["path"].Value,
+            new Vector2(
+                float.Parse(command.Attributes["x"].Value),
+                float.Parse(command.Attributes["y"].Value)
+            ),
+            new Vector2(
+                float.Parse(command.Attributes?["s"]?.Value ?? "1"),
+                float.Parse(command.Attributes?["s"]?.Value ?? "1")
+            ),
+            float.Parse(command.Attributes?["r"]?.Value ?? "0"),
+            int.Parse(command.Attributes?["o"]?.Value ?? "0")
         );
     }
 
@@ -66,8 +58,16 @@ public class Element : MonoBehaviour
         var spriteComponent = gameElement.AddComponent<SpriteRenderer>();
         var element = gameElement.AddComponent<Element>();
 
+        //var stopwatch = new System.Diagnostics.Stopwatch();
+        //stopwatch.Start();
+
         spriteComponent.sortingOrder = order;
-        spriteComponent.sprite = Resources.Load<Sprite>(spritePath);
+
+        //stopwatch.Stop();
+        //Debug.Log(name + " " + stopwatch.ElapsedMilliseconds);
+
+        spriteComponent.sprite = ResourceController.Get<Sprite>(spritePath);
+
 
         element.Position = position;
         element.Scale = scale ?? Vector2.one;

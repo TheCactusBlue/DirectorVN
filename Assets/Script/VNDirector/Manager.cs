@@ -2,61 +2,78 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Newtonsoft.Json.Linq;
+using System.Xml;
 
 public class Manager : MonoBehaviour {
 
     public View view;
+    public AudioSource musicPlayer;
 
     public bool isDebug = true;
 
     const int ScreenWidth = 1920;
     const int ScreenHeight = 1080;
 
-    private JObject currentScript;
+    public XmlDocument vnScript;
     public string route = "root";
-    public int step = 0;
+    public int step = 1;
     
     public static JSEngine jsEngine = new JSEngine();
 
     private HoldState hold = HoldState.Clear; // when held, the VN waits for user click to go next.
 
-    // Use this for initialization
     void Start () {
-        currentScript = LoadScript("VNScripts/part1");
+        vnScript = new XmlDocument();
+        vnScript.LoadXml(Resources.Load<TextAsset>("VNScripts/part2").text);
 	}
 	
-	// Update is called once per frame
 	void Update () {
-        if (Input.GetKeyDown("space")) {
+        ResourceController.Update();
+        if (Input.GetKeyDown("space") || Input.GetKeyDown("return")) {
             NextStep();  
         };
-        ScriptProcessingLoop();
+        ProcessLoop();
 
 	}
 
-    private void ScriptProcessingLoop() {
+    private void ProcessLoop() {
         while (true) {
             if (hold == HoldState.Held) { break; }
 
-            // Get Current Command Token
-            JToken command = currentScript[route][step];
-            Debug.Log(command);
-
-            if (command.Type == JTokenType.String) {
-                view.SetDialogue(command.Value<string>());
-
-            } else if (command["Dialogue"] != null) {
-                view.SetDialogue(command["Dialogue"].Value<string>());
-
-            } else if (command["CreateElement"] != null) {
-                Element.CreateElementFromCommand(command);
-
-            } else if (command["DestroyElement"] != null) {
-                Element.DestroyElement(command["DestroyElement"].Value<string>());
-
-            } else if (command["MoveElement"] != null) {
-
+            var command = vnScript.SelectSingleNode($"/Script/Label[@name='{route}']/*[{step}]"); // Using XPath, Array starts at 1 b*tches
+            switch (command.Name) {
+                case "Text":
+                    view.SetDialogue(command.InnerText);
+                    break;
+                case "Element-Create":
+                    Element.CreateElementFromXML(command);
+                    break;
+                case "Element-Destroy":
+                    Element.DestroyElement(command.Attributes["name"].Value);
+                    break;
+                case "Music-Play":
+                    var clip = ResourceController.Get<AudioClip>(command.InnerText);
+                    musicPlayer.PlayOneShot(clip);
+                    break;
+                case "Load":
+                    if (command.Attributes?["type"]?.Value == "sprite") {
+                        ResourceController.Load<Sprite>(command.InnerText);
+                    } else {
+                        ResourceController.Load(command.InnerText);
+                    }
+                    break;
+                case "Unload":
+                    ResourceController.Unload(command.InnerText);
+                    break;
+                case "Jump":
+                    route = command.Attributes["label"].Value;
+                    step = 0; // Not a bug, just a hacky way to handle the increment at the end
+                    break;
+                case "JS":
+                    jsEngine.engine.Execute(command.InnerText);
+                    break;
+                default:
+                    break;
             }
             hold = Hold.GetHoldState(command);
             if (hold == HoldState.Clear) step++;
@@ -64,16 +81,12 @@ public class Manager : MonoBehaviour {
     }
 
     void NextStep() {
-        if (hold == HoldState.Held) {
+        if (view.isTextScrolling) {
+            view.EndScroll();
+        } else if (hold == HoldState.Held) {
             step++;
             hold = HoldState.Clear;
         }
-    }
-
-    // Note: drop the file extension.
-    private static JObject LoadScript(string path) {
-        var scriptFile = Resources.Load<TextAsset>(path);
-        return JObject.Parse(scriptFile.text);
     }
 
     public static Vector3 ScreenToWorld(float x, float y, float z = 0) {

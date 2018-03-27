@@ -5,26 +5,43 @@ using System.Text;
 
 public class View : MonoBehaviour {
 
+    public const float timePerChar = 0.2f;
+    private float scrollTime = 0;
+
     public GameObject textBoxCollection;
 
     public Text nameBox;
     public Text dialogueBox;
-    private bool _isDialogueBoxVisible = false;
 
-    public string scrollText = "";
-    public Queue<char> textToScroll;
-    // Use this for initialization
+    private Queue<char> textToScroll;
+    public bool isTextScrolling = false;
+    private string fullText;
+
     void Start() {
         textBoxCollection.SetActive(false);
     }
 
     // Update is called once per frame
     void Update() {
-
+        scrollTime += Time.deltaTime;
+        if ((scrollTime > timePerChar) && isTextScrolling) {
+            dialogueBox.text += textToScroll.Dequeue();
+            if (textToScroll.Count == 0) isTextScrolling = false;
+        }
     }
 
     public void SetDialogue(string text, bool isScrolled = true) {
+        fullText = Manager.jsEngine.FormatString(text);
+        textToScroll = new Queue<char>(fullText);
+        isTextScrolling = true;
+
+        dialogueBox.text = "";
+
         textBoxCollection.SetActive(true);
-        dialogueBox.text = Manager.jsEngine.FormatString(text);
+    }
+
+    public void EndScroll() {
+        isTextScrolling = false;
+        dialogueBox.text = fullText;
     }
 }

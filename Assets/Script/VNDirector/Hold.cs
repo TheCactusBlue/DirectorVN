@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Newtonsoft.Json.Linq;
+using System.Xml;
 /***
 * [Clear] means that commands are passed automatically, allowing execution of multiple commands in one cycle
 * [Held] holds the VN execution to the point, executing when Nexted.
@@ -20,15 +21,17 @@ public class Hold {
         }
     }
 
-    public static HoldState GetHoldState(JToken command) {
+    public static HoldState GetHoldState(XmlNode command) {
         //Debug.Log(command["_h"].Type);
-        if (command.Type == JTokenType.String) {
-            return HoldState.Held;
-        } else if (command["_h"] == null) {
-            return HoldState.Clear;
-        } else if (command["_h"].Type == JTokenType.String) { //_h tag exists
-
-            switch (command["_h"].Value<string>()) {
+        if (command.Attributes?["_h"] == null) {
+            switch (command.Name) {
+                case "Text":
+                    return HoldState.Held;
+                default:
+                    break;
+            }
+        } else { //_h tag exists
+            switch (command.Attributes["_h"].Value) {
                 case "c":
                     return HoldState.Clear;
                 case "h":
