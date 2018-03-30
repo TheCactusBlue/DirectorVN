@@ -12,8 +12,13 @@ public class SaveLoad : MonoBehaviour {
 
     // Update is called once per frame
     public void Save() {
-        JObject s = new JObject();
-        
+        JObject s = new JObject {
+            ["progress"] = new JObject {
+                ["route"] = manager.route,
+                ["step"] = manager.step
+            },
+        };
+
         Debug.Log(manager.route+" "+manager.step);
     }
 }

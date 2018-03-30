@@ -9,8 +9,6 @@ public class Manager : MonoBehaviour {
     public View view;
     public AudioSource musicPlayer;
 
-    public bool isDebug = true;
-
     const int ScreenWidth = 1920;
     const int ScreenHeight = 1080;
 
@@ -41,7 +39,7 @@ public class Manager : MonoBehaviour {
             if (hold == HoldState.Held) { break; }
 
             var command = vnScript.SelectSingleNode($"/Script/Label[@name='{route}']/*[{step}]"); // Using XPath, Array starts at 1 b*tches
-            switch (command.Name) {
+            switch (command.Name) { // wew thats a large switch
                 case "Text":
                     view.SetDialogue(command.InnerText);
                     break;

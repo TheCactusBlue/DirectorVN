@@ -65,7 +65,6 @@ public class Element : MonoBehaviour {
     }
 
     public void MoveFromXML(XmlNode command) {
-        
     }
 
     public static void CreateElement(string name, string spritePath, Vector2 position, Vector2? scale = null, float rotation = 0, int order = 0) {
