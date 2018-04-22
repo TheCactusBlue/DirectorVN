@@ -9,6 +9,9 @@ public class ResourceController {
 
     public static List<string> toRemove = new List<string>();
 
+    /// <summary>
+    /// Updates planned resourceRequests.
+    /// </summary>
     public static void Update() {
         foreach (KeyValuePair<string, ResourceRequest> resource in resourceRequests) {
             if (resource.Value.isDone) {
@@ -22,7 +25,9 @@ public class ResourceController {
         }
     }
 
-    // Preloads a resource into memory.
+    /// <summary>
+    /// Preloads a resource into memory.
+    /// </summary>
     public static void Load(string path) {
         resourceRequests[path] = Resources.LoadAsync(path);
     }

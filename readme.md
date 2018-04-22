@@ -1,0 +1,1 @@
+All the important scripts are in Script/VNDirector. No fully fledged documentation yet, but there isn't much, so this should suffice

@@ -1,13 +1,12 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Xml;
 using UnityEngine;
 
 [Serializable]
 public class Element : MonoBehaviour {
 
-    public static Dictionary<string, GameObject> collection = new Dictionary<string, GameObject>();
+    public static Dictionary<string, GameObject> instances = new Dictionary<string, GameObject>();
     public static GameObject stage = GameObject.Find("Stage");
 
     public float zOrder;
@@ -47,27 +46,7 @@ public class Element : MonoBehaviour {
         }
     }
 
-    public static void CreateElementFromXML(XmlNode command) {
-        CreateElement(
-            command.Attributes["name"].Value,
-            command.Attributes["path"].Value,
-            new Vector2(
-                float.Parse(command.Attributes["x"].Value),
-                float.Parse(command.Attributes["y"].Value)
-            ),
-            new Vector2(
-                float.Parse(command.Attributes?["s"]?.Value ?? "1"),
-                float.Parse(command.Attributes?["s"]?.Value ?? "1")
-            ),
-            float.Parse(command.Attributes?["r"]?.Value ?? "0"),
-            int.Parse(command.Attributes?["o"]?.Value ?? "0")
-        );
-    }
-
-    public void MoveFromXML(XmlNode command) {
-    }
-
-    public static void CreateElement(string name, string spritePath, Vector2 position, Vector2? scale = null, float rotation = 0, int order = 0) {
+    public static void Create(string name, string spritePath, Vector2 position, Vector2? scale = null, float rotation = 0, int order = 0) {
 
         var gameElement = new GameObject(name);
         var spriteComponent = gameElement.AddComponent<SpriteRenderer>();
@@ -84,12 +63,12 @@ public class Element : MonoBehaviour {
 
         element.transform.SetParent(stage.transform);
 
-        collection[name] = gameElement;
+        instances[name] = gameElement;
     }
 
-    public static void DestroyElement(string name) {
-        Destroy(collection[name]);
-        collection.Remove(name);
+    public static void Destroy(string name) {
+        Destroy(instances[name]);
+        instances.Remove(name);
     }
 
     void Start() {

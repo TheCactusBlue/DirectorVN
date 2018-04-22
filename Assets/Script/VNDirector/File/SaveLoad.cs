@@ -17,8 +17,9 @@ public class SaveLoad : MonoBehaviour {
                 ["route"] = manager.route,
                 ["step"] = manager.step
             },
+            ["jsData"] = Manager.jsEngine.SerializeToJSON(),
         };
 
-        Debug.Log(manager.route+" "+manager.step);
+        Debug.Log(s.ToString());
     }
 }

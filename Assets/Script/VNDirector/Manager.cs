@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -36,20 +37,23 @@ public class Manager : MonoBehaviour {
 
     private void ProcessLoop() {
         while (true) {
+            // If held, break as not to cause infinite loop :3
             if (hold == HoldState.Held) { break; }
 
-            var command = vnScript.SelectSingleNode($"/Script/Label[@name='{route}']/*[{step}]"); // Using XPath, Array starts at 1 b*tches
+            // Using XPath, finds current label, finds the step (any type) with the current step no (Note: XPath order selector starts at 1, not 0)
+            var command = vnScript.SelectSingleNode($"/Script/Label[@name='{route}']/*[{step}]");
+
             switch (command.Name) { // wew thats a large switch
-                case "Text":
+                case "Text": // A plain VN Dialogue, nothing hard
                     view.SetDialogue(command.InnerText);
                     break;
                 case "Element-Create":
-                    Element.CreateElementFromXML(command);
+                    XMLElementAction.CreateElement(command);
                     break;
                 case "Element-Destroy":
-                    Element.DestroyElement(command.Attributes["name"].Value);
+                    Element.Destroy(command.Attributes["name"].Value);
                     break;
-                case "Music-Play":
+                case "Music-Play": // TODO: Not sure what this does, replace!
                     var clip = ResourceController.Get<AudioClip>(command.InnerText);
                     musicPlayer.PlayOneShot(clip);
                     break;
@@ -65,16 +69,16 @@ public class Manager : MonoBehaviour {
                     break;
                 case "Jump":
                     route = command.Attributes["label"].Value;
-                    step = 0; // Not a bug, just a hacky way to handle the increment at the end
+                    step = 0; // somewhat hacky way to handle the increment at the end, will fix if this errs or something
                     break;
-                case "JS":
-                    jsEngine.engine.Execute(command.InnerText);
+                case "JS": // JS Exec
+                    jsEngine.Execute(command.InnerText);
                     break;
                 default:
-                    break;
+                    throw new Exception($"{command.Name} is not a valid tag");
             }
             hold = Hold.GetHoldState(command);
-            if (hold == HoldState.Clear) step++;
+            if (hold == HoldState.Clear) step++; // Only progress to next step when HoldState is clear.
         }
     }
 
