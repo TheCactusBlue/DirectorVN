@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Xml;
 
+// TODO: get the statics and the singleton patterns cleared out (somehow)
 public class Manager : MonoBehaviour {
 
     public View view;
@@ -13,6 +14,7 @@ public class Manager : MonoBehaviour {
     const int ScreenWidth = 1920;
     const int ScreenHeight = 1080;
 
+    // TODO: make script scalable
     public XmlDocument vnScript = new XmlDocument();
     public string route = "main";
     public int step = 1;
@@ -90,6 +92,12 @@ public class Manager : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Convert a point on screen to a corresponding point in-world.
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="z">Probably never will be used, just there for the sake of scalability</param>
     public static Vector3 ScreenToWorld(float x, float y, float z = 0) {
         float bx = x / ScreenWidth * Screen.width;
         float by = Screen.height - y / ScreenHeight * Screen.height;
