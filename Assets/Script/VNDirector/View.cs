@@ -21,7 +21,7 @@ public class View : MonoBehaviour {
         textBoxCollection.SetActive(false);
     }
 
-    // Update is called once per frame
+    // Scroll Text
     void Update() {
         scrollTime += Time.deltaTime;
         if ((scrollTime > timePerChar) && isTextScrolling) {

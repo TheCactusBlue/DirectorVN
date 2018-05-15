@@ -1,9 +1,5 @@
 ﻿using UnityEngine;
 
-/* 
- * Functions taken from Tween.js - Licensed under the MIT license
- * at https://github.com/sole/tween.js
- */
 public class Easing {
 
     public static float Linear(float k) {

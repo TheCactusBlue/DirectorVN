@@ -1,0 +1,20 @@
+<Script>
+    <Label name="main">
+        <!-- test -->
+        <Load>Audio/Music/Yawn</Load>
+        <Load type="sprite">Img/Char/moon</Load>
+
+        <Element-Create name="bg" path="Img/Bg/classroom1" x="960" y="540" _h="h"/>
+        <!-- Executes JS, may also think about Lua implementation -->
+        <JS>data.name = "Cactus";</JS>
+        <Element-Create name="char" path="Img/Char/moon" x="960" y="1200" r="0" z="2" _h="h"/>
+        <Music-Play>Audio/Music/Yawn</Music-Play>
+        <Text>hello world</Text>
+        <Text>Your name is #{data.name}, right?</Text>
+        <Jump label="test"/>
+    </Label>
+    <Label name="test">
+        <Element-Destroy name="char"/>
+        <Text>Jump test here</Text>
+    </Label>
+</Script>

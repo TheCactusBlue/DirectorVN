@@ -13,7 +13,7 @@ public class Manager : MonoBehaviour {
     const int ScreenWidth = 1920;
     const int ScreenHeight = 1080;
 
-    public XmlDocument vnScript;
+    public XmlDocument vnScript = new XmlDocument();
     public string route = "main";
     public int step = 1;
     
@@ -22,8 +22,7 @@ public class Manager : MonoBehaviour {
     private HoldState hold = HoldState.Clear; // when held, the VN waits for user click to go next.
 
     void Start () {
-        vnScript = new XmlDocument();
-        vnScript.LoadXml(Resources.Load<TextAsset>("VNScripts/part2").text);
+        vnScript.LoadXml(Resources.Load<TextAsset>("VNScripts/part2").text); // TODO: Add options for multiple scripts, FIX HARDCODING
 	}
 	
 	void Update () {
@@ -48,7 +47,7 @@ public class Manager : MonoBehaviour {
                     view.SetDialogue(command.InnerText);
                     break;
                 case "Element-Create":
-                    XMLElementAction.CreateElement(command);
+                    XMLElementAction.Create(command);
                     break;
                 case "Element-Destroy":
                     Element.Destroy(command.Attributes["name"].Value);

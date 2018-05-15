@@ -7,7 +7,7 @@ using System.Xml;
 /// </summary>
 public static class XMLElementAction {
 
-    public static void CreateElement(XmlNode command) {
+    public static void Create(XmlNode command) {
         Element.Create(
             command.Attributes["name"].Value,
             command.Attributes["path"].Value,
@@ -22,5 +22,9 @@ public static class XMLElementAction {
             float.Parse(command.Attributes?["r"]?.Value ?? "0"), // Rotation
             int.Parse(command.Attributes?["z"]?.Value ?? "0") // Z-Order
         );
+    }
+
+    public static void Move(XmlNode command) {
+        
     }
 }

@@ -15,7 +15,7 @@ public class JSEngine : Engine {
     public JSEngine() : base() {
         SetValue("log", new System.Action<object>(Debug.Log));
         SetValue("name", "CactusBlue");
-        Execute("var data = {};");
+        Execute("var data = {}");
 	}
 
     /// <summary>
